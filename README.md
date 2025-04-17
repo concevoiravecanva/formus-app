@@ -196,3 +196,5 @@ To more easily customize the URL of the server:
    **Note:** `BACKEND_HOST` is a global constant that contains the value of the `CANVA_BACKEND_HOST` environment variable. The variable is made available to the app via webpack and does not need to be imported.
 
 4. Before bundling the app for production, update `CANVA_BACKEND_HOST` to point to the production backend.
+
+[![Netlify Status](URL_DU_BADGE_NETLIFY)](URL_DE_VOTRE_SITE_NETLIFY)
