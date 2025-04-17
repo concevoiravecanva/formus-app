@@ -18,8 +18,7 @@
     "format:check": "prettier '{examples,src,utils,scripts}/**/*.{css,ts,tsx,json,js,mjs}' --check",
     "format:file": "prettier $1 --no-config --write",
     "test": "jest --no-cache --detectOpenHandles",
-    "test:watch": "jest --no-cache --watch",
-    "postinstall": "ts-node ./scripts/copy_env.ts"
+    "test:watch": "jest --no-cache --watch"
   },
   "keywords": [],
   "author": "Canva Pty Ltd.",
