@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "lib": [
+    "jsx": "react-jsx", // OK
+    "lib": [ // OK
       "dom",
       "dom.iterable",
       "es2018",
@@ -11,36 +11,53 @@
       "es2020.promise",
       "es2020.string"
     ],
-    "types": ["node", "jest"],
-    "composite": false,
-    "declaration": false,
-    "declarationMap": false,
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    "noImplicitOverride": true,
-    "moduleResolution": "node",
-    "rootDir": ".",
-    "outDir": "dist",
-    "strict": true,
-    "skipLibCheck": true,
-    "target": "ES2019",
-    "sourceMap": true,
-    "inlineSources": true,
-    "module": "ESNext",
-    "noImplicitAny": false,
-    "removeComments": true,
-    "preserveConstEnums": true,
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": "./",
-    "paths": {
+    "types": ["node", "jest"], // OK
+    // "composite": false, // Généralement pas nécessaire sauf si projet composite
+    // "declaration": false, // OK si pas de lib
+    // "declarationMap": false, // OK si pas de lib
+    "experimentalDecorators": true, // OK si tu utilises des décorateurs
+    "importHelpers": true, // OK
+    "noImplicitOverride": true, // OK
+    "moduleResolution": "node", // OK
+    // "rootDir": ".", // Peut souvent être omis si baseUrl est défini
+    // "outDir": "dist", // Pas utile si noEmit est true
+    "strict": true, // OK
+    "skipLibCheck": true, // OK
+    "target": "ES2019", // OK
+    "sourceMap": true, // OK - pour les source maps
+    // "inlineSources": true, // Souvent redondant avec sourceMap: true
+    "module": "ESNext", // OK
+    "noImplicitAny": false, // OK (préférence personnelle)
+    // "removeComments": true, // OK (préférence personnelle)
+    // "preserveConstEnums": true, // OK
+    "allowSyntheticDefaultImports": true, // OK
+    "esModuleInterop": true, // AJOUTÉ : Bonne pratique avec allowSyntheticDefaultImports
+    "baseUrl": "./", // OK
+    "paths": { // OK
       "assets": ["./assets"],
       "styles": ["./styles"]
-    }
+      // AJOUTÉ : Tu pourrais aussi ajouter un alias pour src si tu en as besoin
+      // "src/*": ["src/*"]
+    },
+    // AJOUTÉ : Très important quand Webpack gère la compilation/bundling
+    "noEmit": true,
+    "isolatedModules": true // AJOUTÉ : Bonne pratique avec les bundlers
   },
-  "include": ["**/*", "./node_modules/@types/**/*"],
-  "ts-node": {
-    "compilerOptions": {
-      "module": "commonjs"
-    }
-  }
+  // MODIFIÉ : Inclure uniquement les dossiers/fichiers contenant ton code source TS/TSX
+  "include": [
+    "src", // Le dossier principal de ton code TS/TSX
+    "scripts", // Si tes scripts sont en TS
+    "webpack.config.ts" // Pour vérifier le fichier de config lui-même
+    // Ajoute d'autres dossiers sources si nécessaire
+  ],
+  // AJOUTÉ : Exclure explicitement les dossiers inutiles/problématiques
+  "exclude": [
+    "node_modules",
+    "dist",
+    "examples", // Exclure les exemples si tu ne veux pas les vérifier ici
+    "coverage" // Dossier de couverture de tests
+    // Ajoute d'autres dossiers à exclure
+  ]
+  // La section "ts-node" est OK, elle est spécifique à l'exécution de ts-node
+  // "ts-node": { ... }
 }
