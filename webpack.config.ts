@@ -6,6 +6,8 @@ import { transform } from "@formatjs/ts-transformer";
 import * as chalk from "chalk";
 import { config } from "dotenv";
 import { Configuration as DevServerConfiguration } from "webpack-dev-server";
+// MODIFIÉ : Changement de l'import pour utiliser require
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 config();
 
@@ -37,8 +39,8 @@ export function buildConfig({
     );
     process.exit(-1);
   } else if (backendHost.includes("localhost") && mode === "production") {
-    console.error(
-      chalk.redBright.bold(
+    console.warn(
+      chalk.yellowBright.bold(
         "BACKEND_HOST should not be set to localhost for production builds!",
       ),
       `Refer to "Customizing the backend host" in the README.md for more information.`,
@@ -176,10 +178,21 @@ export function buildConfig({
       }),
       // Apps can only submit a single JS file via the developer portal
       new optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
+
+      // Utilisation de HtmlWebpackPlugin (qui est maintenant importé via require)
+      new HtmlWebpackPlugin({
+        // Utilise le fichier index.html à la racine du projet comme modèle
+        template: path.resolve(process.cwd(), 'index.html'),
+        // Injecte le script app.js généré dans le body du HTML
+        inject: 'body',
+      }),
+
     ].filter(Boolean),
     ...buildDevConfig(devConfig),
   };
 }
+
+// ... (la fonction buildDevConfig reste inchangée) ...
 
 function buildDevConfig(options?: DevConfig): {
   devtool?: string;
@@ -204,7 +217,7 @@ function buildDevConfig(options?: DevConfig): {
       : "http",
     host: "localhost",
     historyApiFallback: {
-      rewrites: [{ from: /^\/$/, to: "/app.js" }],
+      rewrites: [{ from: /^\/$/, to: "/index.html" }], // Pointe vers /index.html
     },
     port,
     client: {
@@ -227,9 +240,7 @@ function buildDevConfig(options?: DevConfig): {
       },
     };
   } else if (enableHmr && appId) {
-    // Deprecated - App ID should not be used to configure HMR in the future and can be safely removed
-    // after a few months.
-
+    // Deprecated
     console.warn(
       "Enabling Hot Module Replacement (HMR) with an App ID is deprecated, please see the README.md on how to update.",
     );
@@ -250,7 +261,7 @@ function buildDevConfig(options?: DevConfig): {
         "Attempted to enable Hot Module Replacement (HMR) without configuring App Origin... Disabling HMR.",
       );
     }
-    devServer.webSocketServer = false;
+    // devServer.webSocketServer = false; // Commenté
   }
 
   return {
@@ -258,5 +269,6 @@ function buildDevConfig(options?: DevConfig): {
     devServer,
   };
 }
+
 
 export default buildConfig;

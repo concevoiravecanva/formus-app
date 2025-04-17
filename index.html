@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Formus App</title> <!-- Tu peux changer ce titre -->
+    <!-- 
+      Les liens vers les fichiers CSS (comme @canva/app-ui-kit/styles.css)
+      seront généralement gérés par ta configuration Webpack 
+      (soit injectés ici, soit inclus dans le bundle JS).
+      HtmlWebpackPlugin peut aussi injecter des <link> si tu utilises MiniCssExtractPlugin.
+      Pour l'instant, on laisse Webpack s'en charger.
+    -->
+  </head>
+  <body>
+    <!-- C'est ici que ton application React sera "montée" -->
+    <div id="root"></div>
+
+    <!-- 
+      IMPORTANT : N'ajoute PAS de balise <script src="app.js"></script> ici !
+      Le plugin HtmlWebpackPlugin dans ta configuration Webpack 
+      le fera automatiquement lors de la création du fichier final 
+      dans le dossier 'dist'. 
+    -->
+  </body>
+</html>
