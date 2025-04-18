@@ -59,16 +59,17 @@ onReady(async () => {
 });
 
 // --- Gestion du Hot Module Replacement (HMR) pour le développement ---
-// Utilise process.env.NODE_ENV pour s'assurer que ce bloc est complètement retiré en production
-// par les outils de build (Webpack + Terser).
-if (process.env.NODE_ENV !== 'production' && module.hot) { // <--- MODIFICATION ICI
-  console.log("HMR support enabled.");
-  // Accepte les mises à jour pour le module './app' (votre composant principal)
-  module.hot.accept("./app", () => {
-    console.log("HMR update detected for './app'. Re-rendering...");
-    // Ré-exécute la fonction de rendu lorsque le composant App est mis à jour
-    renderApp();
-  });
-  // Optionnel : Vous pourriez ajouter d'autres modules à surveiller si nécessaire
-  // module.hot.accept(['./autre-module', './encore-un-autre'], renderApp);
+// Condition simplifiée, reposant uniquement sur NODE_ENV pour l'élimination en production.
+if (process.env.NODE_ENV !== 'production') { // <--- CONDITION EXTERNE SIMPLIFIÉE
+  // On garde la vérification interne de module.hot par sécurité pour le dev
+  // et pour s'assurer que l'API HMR est bien disponible.
+  if (module.hot) { // <--- CONDITION INTERNE
+      console.log("HMR support enabled.");
+      module.hot.accept("./app", () => {
+        console.log("HMR update detected for './app'. Re-rendering...");
+        renderApp();
+      });
+      // Optionnel : Vous pourriez ajouter d'autres modules à surveiller si nécessaire
+      // module.hot.accept(['./autre-module', './encore-un-autre'], renderApp);
+  }
 }
