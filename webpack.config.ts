@@ -6,7 +6,7 @@ const { transform } = require("@formatjs/ts-transformer");
 const chalk = require("chalk");
 const { config } = require("dotenv");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin'); // --- AJOUTÉ ---
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 // Les annotations de type peuvent rester pour l'aide au développement
 type Configuration = import('webpack').Configuration;
@@ -36,7 +36,7 @@ function buildConfig({
   backendHost?: string;
 } = {}): Configuration & DevServerConfiguration {
   const mode = devConfig ? "development" : "production";
-  const isProduction = mode === 'production'; // --- AJOUTÉ : Helper pour la condition ---
+  const isProduction = mode === 'production';
 
   // --- Backend Host Check --- (inchangé)
   if (!backendHost) {
@@ -45,7 +45,7 @@ function buildConfig({
         `Refer to "Customizing the backend host" in the README.md for more information.`,
     );
     process.exit(-1);
-  } else if (backendHost.includes("localhost") && isProduction) { // Utilise isProduction ici
+  } else if (backendHost.includes("localhost") && isProduction) {
     console.warn(
         chalk.yellowBright.bold(
             "BACKEND_HOST should not be set to localhost for production builds!",
@@ -58,7 +58,6 @@ function buildConfig({
   // === MAIN CONFIGURATION OBJECT ===
   return {
     mode,
-    // Utilise isProduction pour le devtool
     devtool: isProduction ? 'source-map' : 'eval-source-map',
     context: path.resolve(process.cwd(), "./"),
     entry: {
@@ -77,7 +76,7 @@ function buildConfig({
     infrastructureLogging: { // (inchangé)
       level: "none",
     },
-    module: {
+    module: { // (règles CSS modifiées précédemment pour MiniCssExtractPlugin sont conservées)
       rules: [
         { // Règle ts-loader (inchangée)
           test: /\.tsx?$/,
@@ -98,22 +97,19 @@ function buildConfig({
             },
           ],
         },
-        { // Règle CSS (Application) --- MODIFIÉE ---
+        { // Règle CSS (Application)
           test: /\.css$/,
           exclude: /node_modules/,
           use: [
-            // Utilise MiniCssExtractPlugin en production, sinon style-loader en développement
-            isProduction ? MiniCssExtractPlugin.loader : 'style-loader', // <-- MODIFIÉ
+            isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
             {
               loader: "css-loader",
               options: {
-                modules: true, // Garde les CSS Modules actifs
-                // Optionnel: pour aider au débogage des noms de classes générés
-                // localIdentName: isProduction ? '[hash:base64]' : '[path][name]__[local]--[hash:base64:5]',
+                modules: true,
               },
             },
             {
-              loader: "postcss-loader", // PostCSS (avec cssnano) reste après css-loader
+              loader: "postcss-loader",
               options: {
                 postcssOptions: {
                   plugins: [require("cssnano")({ preset: "default" })],
@@ -148,13 +144,12 @@ function buildConfig({
             },
           ],
         },
-        { // Règle CSS node_modules --- MODIFIÉE ---
+        { // Règle CSS node_modules
           test: /\.css$/,
           include: /node_modules/,
           use: [
-             // Utilise MiniCssExtractPlugin en production, sinon style-loader en développement
-             isProduction ? MiniCssExtractPlugin.loader : 'style-loader', // <-- MODIFIÉ
-            "css-loader", // Pas de 'modules: true' ici, car on ne veut pas modulariser les CSS de node_modules
+             isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
+            "css-loader",
             {
               loader: "postcss-loader",
               options: {
@@ -183,8 +178,11 @@ function buildConfig({
       path: path.resolve(process.cwd(), "dist"),
       clean: true,
     },
-    plugins: [ // --- MODIFIÉE ---
+    plugins: [ // --- MODIFIÉ ICI ---
       new DefinePlugin({
+        // Définit la variable d'environnement NODE_ENV pour le code client
+        'process.env.NODE_ENV': JSON.stringify(mode), // <--- AJOUT DE CETTE LIGNE
+        // Garde la définition de BACKEND_HOST
         BACKEND_HOST: JSON.stringify(backendHost),
       }),
       new optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
@@ -192,12 +190,12 @@ function buildConfig({
         template: path.resolve(process.cwd(), 'index.html'),
         inject: 'body',
       }),
-      // Ajoute le plugin SEULEMENT en production
+      // Ajoute le plugin SEULEMENT en production (inchangé)
       isProduction && new MiniCssExtractPlugin({
-        filename: '[name].[contenthash].css', // Utilise contenthash pour le cache busting
+        filename: '[name].[contenthash].css',
         chunkFilename: '[id].[contenthash].css',
       }),
-    ].filter(Boolean), // filter(Boolean) enlève les entrées 'false' (comme le plugin si isProduction est false)
+    ].filter(Boolean),
     // Applique la config spécifique au devServer (inchangée)
     ...buildDevConfig(devConfig),
   };
@@ -209,6 +207,7 @@ function buildConfig({
 function buildDevConfig(options?: DevConfig): {
   devServer?: DevServerConfiguration;
 } {
+  // ... (contenu de la fonction inchangé) ...
   if (!options) {
     return {};
   }

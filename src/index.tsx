@@ -23,6 +23,7 @@ function renderApp() {
   console.log("Attempting to render React application..."); // Log pour le suivi
 
   // Utilise StrictMode en développement pour des vérifications supplémentaires
+  // Note: StrictMode lui-même est éliminé en production, donc pas besoin de le conditionner ici.
   reactRoot.render(
     <React.StrictMode>
       <AppI18nProvider>
@@ -58,8 +59,9 @@ onReady(async () => {
 });
 
 // --- Gestion du Hot Module Replacement (HMR) pour le développement ---
-// Ce bloc n'a d'effet qu'en mode développement (lancé avec `npm start` ou similaire)
-if (module.hot) {
+// Utilise process.env.NODE_ENV pour s'assurer que ce bloc est complètement retiré en production
+// par les outils de build (Webpack + Terser).
+if (process.env.NODE_ENV !== 'production' && module.hot) { // <--- MODIFICATION ICI
   console.log("HMR support enabled.");
   // Accepte les mises à jour pour le module './app' (votre composant principal)
   module.hot.accept("./app", () => {
