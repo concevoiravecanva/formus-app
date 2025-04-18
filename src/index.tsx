@@ -11,7 +11,8 @@ let reactRoot: Root | null = null;
 
 /**
  * Fonction dédiée au rendu de l'application React.
- * Elle sera appelée initialement par onReady et ensuite par HMR si nécessaire.
+ * Elle sera appelée initialement par onReady.
+ * (La partie HMR qui appelait aussi cette fonction est maintenant commentée)
  */
 function renderApp() {
   // Vérifie si la racine React a été initialisée avant de rendre
@@ -23,7 +24,7 @@ function renderApp() {
   console.log("Attempting to render React application..."); // Log pour le suivi
 
   // Utilise StrictMode en développement pour des vérifications supplémentaires
-  // Note: StrictMode lui-même est éliminé en production, donc pas besoin de le conditionner ici.
+  // Note: StrictMode lui-même est éliminé en production.
   reactRoot.render(
     <React.StrictMode>
       <AppI18nProvider>
@@ -59,11 +60,10 @@ onReady(async () => {
 });
 
 // --- Gestion du Hot Module Replacement (HMR) pour le développement ---
-// Condition simplifiée, reposant uniquement sur NODE_ENV pour l'élimination en production.
-if (process.env.NODE_ENV !== 'production') { // <--- CONDITION EXTERNE SIMPLIFIÉE
-  // On garde la vérification interne de module.hot par sécurité pour le dev
-  // et pour s'assurer que l'API HMR est bien disponible.
-  if (module.hot) { // <--- CONDITION INTERNE
+// --- BLOQUÉ POUR TEST DE PRODUCTION ---
+/*  <-- Début du commentaire
+if (process.env.NODE_ENV !== 'production') {
+  if (module.hot) {
       console.log("HMR support enabled.");
       module.hot.accept("./app", () => {
         console.log("HMR update detected for './app'. Re-rendering...");
@@ -73,3 +73,4 @@ if (process.env.NODE_ENV !== 'production') { // <--- CONDITION EXTERNE SIMPLIFI�
       // module.hot.accept(['./autre-module', './encore-un-autre'], renderApp);
   }
 }
+*/ // <-- Fin du commentaire
