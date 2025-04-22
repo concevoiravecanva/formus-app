@@ -78,14 +78,14 @@ function buildConfig({
     },
     module: { // (règles CSS modifiées précédemment pour MiniCssExtractPlugin sont conservées)
       rules: [
-        { // Règle ts-loader (inchangée)
+        { // Règle ts-loader
           test: /\.tsx?$/,
           exclude: /node_modules/,
           use: [
             {
               loader: "ts-loader",
               options: {
-                transpileOnly: true,
+                // transpileOnly: true, // <--- MIS EN COMMENTAIRE ICI
                 getCustomTransformers: () => ({
                     before: [
                         transform({

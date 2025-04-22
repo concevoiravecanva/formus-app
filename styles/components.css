@@ -1,3 +1,5 @@
+/* styles/components.css */
+
 /* Scroll container */
 .scrollContainer {
   box-sizing: border-box;
@@ -36,3 +38,23 @@
 .scrollContainer:focus-within::-webkit-scrollbar-thumb {
   visibility: visible;
 }
+
+/* Styles ajoutés pour remplacer les props 'attributes' */
+
+.backgroundOptionsContainer {
+	margin-top: 0.5rem;
+	padding: 8px;
+	border: 1px dashed #ccc;
+	border-radius: 4px;
+}
+
+.opacityLabel {
+	min-width: 50px; /* Pour que le texte "Opacité:" ait une largeur minimale */
+    text-align: end; /* Équivalent de alignment="end" */
+}
+
+.bottomButtonsContainer {
+	margin-top: 1rem;
+}
+
+/* Tu peux ajouter d'autres styles personnalisés ici si nécessaire */

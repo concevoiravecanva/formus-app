@@ -5,13 +5,13 @@ import {
 	Button, Rows, Text, Alert,
 	PlusIcon, PencilIcon, TrashIcon, UndoIcon, RedoIcon,
 	GridIcon, ImageIcon
-	// LockOpenIcon, LockClosedIcon removed
 } from "@canva/app-ui-kit";
 import { addElementAtPoint } from "@canva/design";
+// Assure-toi que declarations.d.ts existe dans src pour gérer l'import CSS
 import * as styles from "styles/components.css";
 
 
-// --- Types --- (Keep existing types)
+// --- Types --- (inchangé)
 interface Point { x: number; y: number; }
 interface AnchorData { id: string; anchor: Point; cpIn: Point; cpOut: Point; }
 type DraggedPointType = 'anchor' | 'cpIn' | 'cpOut';
@@ -24,21 +24,20 @@ type ToolMode = 'add' | 'select';
 type BgDragConstraint = 'none' | 'horizontal' | 'vertical';
 
 
-// Helper ID (Keep existing)
+// Helper ID (inchangé)
 let idCounter = 0;
 const generateId = () => `id-${idCounter++}`;
 
 
-// --- Constantes --- (Keep existing)
+// --- Constantes --- (inchangé)
 const SELECTED_ANCHOR_COLOR = "#f5a623";
 const ANCHOR_COLOR = "red";
 const STAGE_HEIGHT = 300;
-// Removed color constants as we now rely on Button variants
 
 
 // --- Composant Principal ---
 export const App = () => {
-  // États Forme (Keep existing)
+  // États Forme (inchangé)
   const [anchors, setAnchors] = useState<AnchorData[]>([]);
   const [pathData, setPathData] = useState<string>('');
   const [viewBox, setViewBox] = useState<{ width: number, height: number } | null>(null);
@@ -48,7 +47,7 @@ export const App = () => {
   const [selectedAnchorId, setSelectedAnchorId] = useState<string | null>(null);
 
 
-  // États UI & Général (Keep existing)
+  // États UI & Général (inchangé)
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<HistoryState[]>([{ anchors: [], isClosed: false }]);
   const [historyIndex, setHistoryIndex] = useState<number>(0);
@@ -57,7 +56,7 @@ export const App = () => {
   const stageContainerRef = useRef<HTMLDivElement>(null);
 
 
-  // États Image Fond (Keep existing)
+  // États Image Fond (inchangé)
   const [backgroundImage, setBackgroundImage] = useState<HTMLImageElement | null>(null);
   const inputFileRef = useRef<HTMLInputElement>(null);
   const [bgImageOpacity, setBgImageOpacity] = useState<number>(1);
@@ -67,12 +66,12 @@ export const App = () => {
   const [bgImageDragConstraint, setBgImageDragConstraint] = useState<BgDragConstraint>('none');
 
 
-  // Refs (Keep existing)
+  // Refs (inchangé)
   const stageRef = useRef<Konva.Stage>(null);
   const draggedPointRef = useRef<DraggedPointInfo | null>(null);
 
 
-  // --- Gestion de l'Historique --- (Keep existing)
+  // --- Gestion de l'Historique --- (inchangé)
   const saveHistory = useCallback((newAnchors: AnchorData[], newIsClosed: boolean) => {
 	setError(null);
 	const currentState: HistoryState = { anchors: newAnchors, isClosed: newIsClosed };
@@ -83,7 +82,7 @@ export const App = () => {
   }, [history, historyIndex]);
 
 
-  // --- Fonctions Annuler / Rétablir --- (Keep existing)
+  // --- Fonctions Annuler / Rétablir --- (inchangé)
   const handleUndo = () => {
 	if (historyIndex > 0 && !isBgMoveModeActive) {
   	setError(null); const newIndex = historyIndex - 1;
@@ -100,7 +99,7 @@ export const App = () => {
   };
 
 
-  // --- Handlers for Tool Buttons --- (Keep existing)
+  // --- Handlers for Tool Buttons --- (inchangé)
   const handleSetTool = (newMode: ToolMode) => {
   	if (isBgMoveModeActive) return; setSelectedAnchorId(null); setToolMode(newMode);
   }
@@ -109,7 +108,7 @@ export const App = () => {
   }
 
 
-  // --- Calcul taille/contrainte Image Fond --- (Keep existing)
+  // --- Calcul taille/contrainte Image Fond --- (inchangé)
   useEffect(() => {
 	if (backgroundImage && dynamicStageWidth > 0 && STAGE_HEIGHT > 0) {
     	const imgWidth = backgroundImage.naturalWidth; const imgHeight = backgroundImage.naturalHeight;
@@ -131,7 +130,7 @@ export const App = () => {
   }, [backgroundImage, dynamicStageWidth]);
 
 
-  // --- Gestion des Interactions Stage (Points) --- (Keep existing)
+  // --- Gestion des Interactions Stage (Points) --- (inchangé)
   const handleStageClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
 	if (isBgMoveModeActive) { return; }
 	setError(null);
@@ -155,7 +154,7 @@ export const App = () => {
   	setSelectedAnchorId(null); saveHistory(updatedAnchors, isClosed);
 	}
   };
-  // --- Drag Handlers --- (Keep existing)
+  // --- Drag Handlers --- (inchangé)
   const handleDragStart = (anchorId: string, pointType: DraggedPointType) => {
 	if (isBgMoveModeActive) return; setError(null);
 	draggedPointRef.current = { anchorId, pointType };
@@ -174,7 +173,7 @@ export const App = () => {
 	if (!draggedPointRef.current || isBgMoveModeActive) return;
 	draggedPointRef.current = null; saveHistory(anchors, isClosed);
   };
-  // --- Delete Point --- (Keep existing)
+  // --- Delete Point --- (inchangé)
   const handleDeletePoint = () => {
 	if (selectedAnchorId && toolMode === 'select' && !isBgMoveModeActive) {
     	const newAnchors = anchors.filter(a => a.id !== selectedAnchorId); setAnchors(newAnchors);
@@ -183,7 +182,7 @@ export const App = () => {
     	setSelectedAnchorId(null); saveHistory(newAnchors, currentIsClosed);
 	}
   };
-  // --- Toggle Path Closure --- (Keep existing logic)
+  // --- Toggle Path Closure --- (inchangé)
   const toggleClosePath = () => {
 	if (anchors.length >= 2 && !isBgMoveModeActive) {
     	const newIsClosed = !isClosed; setIsClosed(newIsClosed); saveHistory(anchors, newIsClosed);
@@ -192,7 +191,7 @@ export const App = () => {
   const isToggleCloseDisabled = anchors.length < 2 || isBgMoveModeActive;
 
 
-  // --- Calcul du Path Data et ViewBox --- (Keep existing)
+  // --- Calcul du Path Data et ViewBox --- (inchangé)
   useEffect(() => {
 	if (anchors.length === 0) { setPathData(''); setViewBox(null); setMinCoords(null); return; }
 	const allPoints: Point[] = [];
@@ -221,7 +220,7 @@ export const App = () => {
   }, [anchors, isClosed]);
 
 
-  // --- useEffect pour mesurer la largeur du conteneur --- (Keep existing)
+  // --- useEffect pour mesurer la largeur du conteneur --- (inchangé)
   useEffect(() => {
 	const container = stageContainerRef.current;
 	if (container) {
@@ -232,7 +231,7 @@ export const App = () => {
   }, []);
 
 
-  // --- Fonctions pour l'image de fond --- (Keep existing)
+  // --- Fonctions pour l'image de fond --- (inchangé)
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
 	if (isBgMoveModeActive) return; setError(null); const file = event.target.files?.[0];
 	if (file && file.type.startsWith('image/')) {
@@ -268,7 +267,7 @@ export const App = () => {
   };
 
 
-  // --- Ajout à Canva --- (Keep existing)
+  // --- Ajout à Canva --- (inchangé)
   const addCustomFrame = async () => {
 	if (!isClosed) { setError("Le chemin doit être fermé pour être ajouté comme cadre."); return; }
 	if (isBgMoveModeActive) { setError("Désactivez le mode déplacement de l'arrière-plan."); return; }
@@ -289,7 +288,7 @@ export const App = () => {
   };
 
 
-   // --- Effacer tout --- (Keep existing)
+   // --- Effacer tout --- (inchangé)
    const clearShape = () => {
 	if (isBgMoveModeActive) return; setError(null);
 	const initialState: HistoryState = { anchors: [], isClosed: false };
@@ -300,7 +299,7 @@ export const App = () => {
    };
 
 
-  // --- Rendu Grille --- (Keep existing)
+  // --- Rendu Grille --- (inchangé)
   const gridSpacing = 20; const gridStroke = '#e0e0e0'; const gridStrokeWidth = 0.5;
   const renderGrid = (width: number, height: number, spacing: number) => {
   	const lines = []; const numVertical = Math.ceil(width / spacing);
@@ -311,7 +310,7 @@ export const App = () => {
   };
 
 
-  // --- Déterminer le curseur --- (Keep existing)
+  // --- Déterminer le curseur --- (inchangé)
   let stageCursor = toolMode === 'add' ? 'crosshair' : 'default';
   if (isBgMoveModeActive) { if (bgImageDragConstraint === 'horizontal') stageCursor = 'ew-resize'; else if (bgImageDragConstraint === 'vertical') stageCursor = 'ns-resize'; else stageCursor = 'grab'; }
   else if (toolMode === 'select') { stageCursor = 'default'; }
@@ -327,15 +326,15 @@ export const App = () => {
     	{/* Input fichier caché */}
     	<input type="file" ref={inputFileRef} onChange={handleImageUpload} accept="image/*" style={{ display: 'none' }} disabled={isBgMoveModeActive} />
 
-    	{/* Barre d'outils - Main unchanged */}
+    	{/* Barre d'outils - Props tooltip supprimées */}
     	<div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', flexWrap: 'wrap', gap: '4px', paddingBottom: '8px', borderBottom: '1px solid #e0e0e0', marginBottom: '8px' }}>
-        	<Button icon={PlusIcon} tooltip="Ajouter Point" variant={toolMode === 'add' ? 'primary' : 'secondary'} onClick={() => handleSetTool('add')} disabled={isBgMoveModeActive || isClosed} />
-        	<Button icon={PencilIcon} tooltip="Modifier/Sélectionner" variant={toolMode === 'select' ? 'primary' : 'secondary'} onClick={() => handleSetTool('select')} disabled={isBgMoveModeActive} />
-        	<Button icon={TrashIcon} tooltip="Supprimer Point Sélectionné" variant="secondary" onClick={handleDeletePoint} disabled={toolMode !== 'select' || !selectedAnchorId || isBgMoveModeActive} />
-        	<Button icon={UndoIcon} tooltip="Annuler" variant="secondary" onClick={handleUndo} disabled={historyIndex <= 0 || isBgMoveModeActive} />
-        	<Button icon={RedoIcon} tooltip="Rétablir" variant="secondary" onClick={handleRedo} disabled={historyIndex >= history.length - 1 || isBgMoveModeActive} />
-        	<Button icon={GridIcon} tooltip={showGrid ? "Masquer la grille" : "Afficher la grille"} variant="secondary" onClick={toggleGrid} disabled={isBgMoveModeActive} />
-        	<Button icon={ImageIcon} tooltip="Charger Image Fond" variant="secondary" onClick={triggerImageUpload} disabled={isBgMoveModeActive} />
+        	<Button icon={PlusIcon} /* tooltip="Ajouter Point" */ variant={toolMode === 'add' ? 'primary' : 'secondary'} onClick={() => handleSetTool('add')} disabled={isBgMoveModeActive || isClosed} />
+        	<Button icon={PencilIcon} /* tooltip="Modifier/Sélectionner" */ variant={toolMode === 'select' ? 'primary' : 'secondary'} onClick={() => handleSetTool('select')} disabled={isBgMoveModeActive} />
+        	<Button icon={TrashIcon} /* tooltip="Supprimer Point Sélectionné" */ variant="secondary" onClick={handleDeletePoint} disabled={toolMode !== 'select' || !selectedAnchorId || isBgMoveModeActive} />
+        	<Button icon={UndoIcon} /* tooltip="Annuler" */ variant="secondary" onClick={handleUndo} disabled={historyIndex <= 0 || isBgMoveModeActive} />
+        	<Button icon={RedoIcon} /* tooltip="Rétablir" */ variant="secondary" onClick={handleRedo} disabled={historyIndex >= history.length - 1 || isBgMoveModeActive} />
+        	<Button icon={GridIcon} /* tooltip={showGrid ? "Masquer la grille" : "Afficher la grille"} */ variant="secondary" onClick={toggleGrid} disabled={isBgMoveModeActive} />
+        	<Button icon={ImageIcon} /* tooltip="Charger Image Fond" */ variant="secondary" onClick={triggerImageUpload} disabled={isBgMoveModeActive} />
     	</div>
 
     	{/* Zone de dessin (Stage Konva) - Unchanged */}
@@ -376,26 +375,30 @@ export const App = () => {
         	)}
     	</div>
 
-    	{/* Section Image Fond - Controls (Keep existing) */}
+    	{/* Section Image Fond - attributes remplacé par className, weight par variant, align par alignment */}
     	{backgroundImage && (
-        	<Rows spacing="0.5u" attributes={{ style: { marginTop: '0.5rem', padding:'8px', border: '1px dashed #ccc', borderRadius: '4px'} }}>
-             	<Text size="small" weight='bold'>Options Arrière-plan :</Text>
+			// AJOUTER la classe CSS .backgroundOptionsContainer dans styles/components.css
+        	<Rows spacing="0.5u" className={styles.backgroundOptionsContainer}>
+				 {/* weight remplacé par variant="bold" */}
+             	<Text size="small" variant="bold">Options Arrière-plan :</Text>
              	<Button variant={isBgMoveModeActive ? "primary" : "secondary"} onClick={toggleBgMoveMode} stretch disabled={bgImageDragConstraint === 'none'}>
                  	{isBgMoveModeActive ? "Arrêter déplacement Fond" : "Déplacer Image Fond"}
-                 	{bgImageDragConstraint === 'horizontal' && !isBgMoveModeActive && " (↔)"}
-                 	{bgImageDragConstraint === 'vertical' && !isBgMoveModeActive && " (↕)"}
-                 	{bgImageDragConstraint === 'none' && " (Non déplaçable)"}
+					{/* Correction pour éviter de passer boolean comme enfant */}
+                 	{(bgImageDragConstraint === 'horizontal' && !isBgMoveModeActive) ? " (↔)" : null}
+                 	{(bgImageDragConstraint === 'vertical' && !isBgMoveModeActive) ? " (↕)" : null}
+                 	{(bgImageDragConstraint === 'none') ? " (Non déplaçable)" : null}
              	</Button>
              	<Button variant="secondary" onClick={removeBackgroundImage} stretch disabled={isBgMoveModeActive}> Supprimer Image Fond </Button>
              	<div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                 	<Text size="xsmall" align="end" attributes={{style: { minWidth: '50px'}}}>Opacité:</Text>
+					 {/* align remplacé par alignment, attributes supprimé (utiliser className si besoin) */}
+                 	<Text size="xsmall" alignment="end" className={styles.opacityLabel}>Opacité:</Text>
                  	<input type="range" min="0" max="1" step="0.05" value={bgImageOpacity} onChange={(e) => setBgImageOpacity(parseFloat(e.target.value))} style={{ flexGrow: 1, cursor: 'pointer', height:'16px' }} disabled={isBgMoveModeActive}/>
              	</div>
         	</Rows>
     	)}
 
     	{/* --- REVERTED: Retour à la structure verticale --- */}
-    	{/* Bouton Ouvrir/Fermer dans son propre conteneur (pour espacement correct via Rows parent) */}
+    	{/* Bouton Ouvrir/Fermer dans son propre conteneur (inchangé) */}
     	<div style={{ marginTop: '0.5rem', marginBottom: '0rem' }}> {/* Ajusté le margin bottom */}
         	<Button
             	variant="tertiary"
@@ -407,14 +410,15 @@ export const App = () => {
         	</Button>
     	</div>
 
-    	{/* Boutons Ajouter et Effacer dans un Rows pour l'empilement vertical */}
-    	<Rows spacing="1u" attributes={{ style: { marginTop: '1rem' } }}> {/* Ajusté le margin top */}
+    	{/* Boutons Ajouter et Effacer - attributes remplacé par className, tooltip supprimé */}
+		{/* AJOUTER la classe CSS .bottomButtonsContainer dans styles/components.css */}
+    	<Rows spacing="1u" className={styles.bottomButtonsContainer}>
         	<Button
             	variant="primary"
             	onClick={addCustomFrame}
             	stretch // Pour prendre toute la largeur
             	disabled={anchors.length < 1 || !pathData || !isClosed || isBgMoveModeActive}
-            	tooltip={!isClosed && anchors.length > 0 ? "Le chemin doit être fermé pour l'ajouter comme cadre." : undefined}
+            	// tooltip prop supprimée
         	>
             	Ajouter comme Cadre
         	</Button>
@@ -434,9 +438,26 @@ export const App = () => {
   );
 };
 
-// Assurez-vous d'avoir un fichier styles/components.css avec au moins ceci :
-/* styles/components.css */
-// .scrollContainer {
-//  	overflow-y: auto; /* ou scroll */
-//  	/* Ajoutez d'autres styles si nécessaire, comme max-height */
-// }
+// N'oubliez pas de définir les classes CSS dans styles/components.css :
+/*
+.scrollContainer {
+	overflow-y: auto;
+	padding-right: 5px; // Exemple pour éviter que la scrollbar ne colle trop
+	max-height: 90vh; // Exemple pour limiter la hauteur
+}
+
+.backgroundOptionsContainer {
+	margin-top: 0.5rem;
+	padding: 8px;
+	border: 1px dashed #ccc;
+	border-radius: 4px;
+}
+
+.opacityLabel {
+	min-width: 50px;
+}
+
+.bottomButtonsContainer {
+	margin-top: 1rem;
+}
+*/
